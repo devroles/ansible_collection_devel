@@ -1,0 +1,9 @@
+.*.swp
+.*.swo
+.*.swn
+__pychace__
+*.pyc
+*.pyo
+.tox
+devroles-devel-*.tar.gz
+log
