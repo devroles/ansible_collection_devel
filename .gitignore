@@ -7,3 +7,4 @@ __pychace__
 .tox
 devroles-devel-*.tar.gz
 log
+roles/mingw_sword_package/*.zip
