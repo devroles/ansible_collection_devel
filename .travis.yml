@@ -10,18 +10,14 @@ install:
   - pip install -U pip
   - pip --version
   - pip install tox tox-ansible
-  - mkdir -p ~/.ssh  # Needed by authorized_key
-  - touch ~/.ssh/id_rsa.pub
-
 before_script:
   # Update submodules - like this one to get the latest
   - git submodule update --remote --recursive
   - cd ..
-  # ansible collections need to be in an ansible_colection path
+  # ansible collections need to be in an ansible_collection path
   - mkdir -p "ansible_collections/${COLLECTION_NAMESPACE}"
   - mv "$(basename "${TRAVIS_REPO_SLUG}")" "ansible_collections/${COLLECTION_NAMESPACE}/${COLLECTION_NAME}"
   - cd "ansible_collections/${COLLECTION_NAMESPACE}/${COLLECTION_NAME}"
-
 script:
   - tox
 
@@ -39,7 +35,7 @@ env:
 deploy:
   provider: releases
   api_key:
-    secure: nPjRqZBSgN0WzoF6go5sKE5lINSCs/bXzXGUlpdplgxYtgh31ZoLpB1kIb5/ugEeILtWIFeW4d18/PCmA5OpIJMeCFe0MzBVaFplWv7DuS3raWyZEIpNz+lkl0Kl5YWemmfylOhHOjggW6WlZ6zom1s5yAyCYvxE78oILm6tASsJ59FmdQY6AxawuiqyOxbzHgvFLPAOnp0h+rgGt+D1I9ZGq2HITIM/Kxzps7NOlWtSi5GshenYPW7Q5eJwUFAgdwfL8/RexwcI1QeivZJTh2/lNKXMmgYWnTr8joLHlczCMmzCXlzqV/DJ8bifxi+Mfd+SHbSqEanwAHvp6VwGtcaqHv0t0QICUOxRJC8aD80vPkx2M9dhXPhNDIGScDOvf0PP098bzJnkkpfrZ17O9wQMpCNs6MfE7vFgAKGK+3oBLJAnybvOHX8WNQAZ4iakRZl7c40wu0+3UPJdQSN8UKThe7vYESnCB4gBOVKHghXAJn128KCXaor53hfeqJhlKDQ6jEfTMcZOuTcyKpbVt/0Ih4rsBEljnMHz8vLxsozAdQ+4qCJ2W454J9Jo1+mdSfJGKDu6iIW2O8K6kYOErxeAVwMijciOEg3epiEGf+tMqKJaor2QWp+amnSWtW5GFHOHuIxCafK39BSoLymPHLhMCrSqanQIPw1U5ksA+3U=
+    secure: tIRIFH0m6pod/wOAvErJ4H9ZAEwMci+z0lwyedVqJ+Daf7Er8Yzs8zZK68lfz7vjCEVKNTS5JHCfb5VbKRiveyl7wB+ah9fDvVdKu6NCVNPe8gTLPR9nKTVCUgpDec+Isla7FKKjPA9U9wPx6buS2RfWdVQWagVKUL0nfaITk4HsTqXXmVEMxB2qCRN/upaSapl8QFqSKHXTosAKs6od/JdxerQM1uhYvxGVcyOa7zWdiKyNFnsSH1a5ynVPFGjDDbxhV2RJOx/jyQxkmjPcaywCVnfmVNrVbsMabesd8FqLPwdS/xcMBGyyb3sZN6xeWCTLpIXQiYok2eAh7p6mMSKJUvAw8j15sPVo6r3lQMqP5HwMJ5j+vdwjy5cB40R0Hg7tsq9V1gveJyT458bkLzDklTWOzoAJsJpX9Z2jRz6+rGg3h//Ljx9boEC/M+LCzECyRIU6FVi6jaIbiAZ3mUtHZRoBQZPb91ZXYEgpCXlb145Kg7+cUA6bM4RdIjrsjBI/v5bkmIFDmTuEip8KbYljB5/rMVQjawWDX0YJISBqE9tvxvbLTeqDZsBf2uC4HRX+Im6PHmhEBQW6G7wEumVlSGkpTSdK4US+p45lANp1D1DYGhp7WIbpSImUWtWJaKgVFMNPXux4EoFE2OAhqHYgmDqTh3Z8/rBSlTf4mIc=
   file_glob: true
   file: "roles/mingw_sword_package/*.zip"
   skip_cleanup: true
@@ -47,3 +43,4 @@ deploy:
     repo: devroles/ansible_collection_devel
     tags: true
     condition: ${TOX_ANSIBLE_ROLE} = "mingw_sword_package"
+    python: "3.8"
