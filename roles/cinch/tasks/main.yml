@@ -1,0 +1,21 @@
+- name: install necessary packages
+  become: true
+  package:
+    name: "{{ cinch_packages }}"
+    state: present
+
+- name: start and enable docker
+  become: true
+  service:
+    name: docker
+    state: started
+    enabled: true
+  when:
+    - ansible_connection != 'docker'
+
+- name: check out code
+  git:
+    repo: https://github.com/RedHatQE/cinch
+    dest: "{{ ansible_user_dir }}/cinch"
+    version: master
+  when: cinch_checkout_code

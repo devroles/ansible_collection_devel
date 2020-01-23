@@ -1,0 +1,51 @@
+- name: converge
+  hosts: all
+  vars:
+    cmake_options: >-
+      -DSWORD_PYTHON_3:BOOL=TRUE
+      -DWORD_PERL:BOOL=TRUE
+      -DSWORD_BUILD_EXAMPLES="Yes"
+      -DSWORD_BUILD_TESTS="Yes"
+      -DLIBSWORD_LIBRARY_TYPE="Shared"
+      -DCMAKE_BUILD_TYPE="Debug"
+      -DCMAKE_INSTALL_PREFIX="~/"
+    cmake_cmd: cmake
+  roles:
+    - role: sword
+  post_tasks:
+    - name: check out source
+      subversion:
+        dest: "{{ ansible_user_dir }}/sword"
+        repo: https://www.crosswire.org/svn/sword/trunk
+        force: true
+      changed_when: false
+
+    - name: set cmake
+      set_fact:
+        cmake_cmd: /usr/bin/cmake3
+      when: >-
+        ansible_distribution == 'CentOS' and
+        ( ansible_distribution_major_version is version('7', '<=') )
+
+    - name: build with cmake
+      shell: |-
+        set -ex
+        mkdir -p build
+        cd build
+        {{ cmake_cmd }} {{ cmake_options }} ..
+        make -j10
+        #make -j3 tests  # utf8 tests currently broken in CMake
+      args:
+        chdir: "{{ ansible_user_dir }}/sword"
+        creates: "{{ ansible_user_dir }}/sword/build/Makefile"
+      changed_when: false
+
+    - name: build with autotools
+      shell: >-
+        ./autogen.sh &&
+        CPPFLAGS=-DU_USING_ICU_NAMESPACE ./usrinst.sh &&
+        make -j6
+      args:
+        chdir: "{{ ansible_user_dir }}/sword"
+        creates: "{{ ansible_user_dir }}/sword/Makefile"
+      changed_when: false

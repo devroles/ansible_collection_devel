@@ -1,0 +1,40 @@
+- name: converge
+  hosts: all
+  roles:
+    - role: ansible
+  post_tasks:
+    - name: install virtualenv on python 2
+      package:
+        name: python2-virtualenv
+        state: present
+      become: true
+      retries: 2
+      register: install_virtualenv
+      until: install_virtualenv is success
+      when:
+        - ansible_distribution == 'CentOS'
+        - ansible_distribution_version is version('8', '<')
+
+    - name: install virtualenv on python 3
+      package:
+        name: python3-virtualenv
+        state: present
+      become: true
+      retries: 2
+      register: install_virtualenv
+      until: install_virtualenv is success
+      when: >-
+        ( ansible_distribution == 'CentOS' and
+        ansible_distribution_version is version('8', '>=') )
+        or
+        ansible_distribution == 'Fedora'
+
+    - name: install pip version of Ansible
+      pip:
+        virtualenv: /venv
+        name: ansible
+        state: present
+      become: true
+      retries: 2
+      register: install_ansible
+      until: install_ansible is success

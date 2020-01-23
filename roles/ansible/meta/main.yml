@@ -1,0 +1,21 @@
+galaxy_info:
+  author: Greg Hellings
+  description: >
+    It seems redundant, but I assure you, it's not! A role that installs the
+    build dependencies so that you can install Ansible from source rather
+    than from a package manager
+  company: n/a
+  license: GPLv3
+  min_ansible_version: 2.4
+  platforms:
+    - name: EL
+      versions:
+        - all
+    - name: Fedora
+      versions:
+        - all
+
+  galaxy_tags:
+    - devroles
+
+dependencies: []

@@ -1,0 +1,5 @@
+sword_distro_packages:
+  - cmake3
+  - cmake3-data
+
+sword_packages: "{{ sword_base_packages + sword_distro_packages }}"

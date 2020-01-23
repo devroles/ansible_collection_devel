@@ -1,0 +1,14 @@
+galaxy_info:
+  author: Greg Hellings
+  description: Install dependencies for working on Sword library
+  license: GPLv3
+  min_ansible_version: 2.4
+  platforms:
+    - name: EL
+      versions:
+        - 7
+    - name: Fedora
+      versions:
+        - all
+
+dependencies: []

@@ -1,0 +1,6 @@
+- name: Converge
+  hosts: all
+  roles:
+    - role: mingw_sword_package
+  vars:
+    download_dest: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}/../../"

@@ -1,0 +1,51 @@
+dependency:
+  name: galaxy
+driver:
+  name: openstack
+lint:
+  name: yamllint
+  options:
+    config-file: tests/yamllint.yml
+platforms:
+  - name: test-awx_devel
+    image: Fedora 29
+    flavor: m1.medium
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+  playbooks:
+    prepare: ../shared/prepare.yml
+    converge: ../shared/playbook.yml
+scenario:
+  name: default
+  create_sequence:
+    - dependency
+    - create
+    - prepare
+  destroy_sequence:
+    - dependency
+    - destroy
+  converge_sequence:
+    - dependency
+    - create
+    - prepare
+    - converge
+  test_sequence:
+    - lint
+    - dependency
+    - syntax
+    - destroy
+    - dependency
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - side_effect
+    - verify
+    - destroy
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
+  directory: ../shared/

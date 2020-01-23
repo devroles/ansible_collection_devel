@@ -1,0 +1,3 @@
+sword_distro_packages:
+  - cmake
+  - cmake-data

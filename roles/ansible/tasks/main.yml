@@ -1,0 +1,25 @@
+- name: read vars
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "vars/{{ ansible_distribution }}-{{
+          ansible_distribution_major_version }}.yml"
+    - "vars/{{ ansible_distribution }}.yml"
+    - vars/default.yml
+
+- name: enable PowerTools
+  ini_file:
+    no_extra_spaces: true
+    path: /etc/yum.repos.d/CentOS-PowerTools.repo
+    section: PowerTools
+    option: enabled
+    value: "1"
+  become: true
+  when:
+    - ansible_distribution == 'CentOS'
+    - ansible_distribution_major_version is version(8, '>=')
+
+- name: install Ansible build deps
+  package:
+    name: "{{ ansible_packages }}"
+    state: present
+  become: true

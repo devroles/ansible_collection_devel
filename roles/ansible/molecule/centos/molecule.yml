@@ -1,0 +1,5 @@
+driver:
+  name: docker
+platforms:
+  - name: ansible
+    image: centos:7

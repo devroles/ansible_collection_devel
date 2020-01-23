@@ -1,0 +1,11 @@
+- hosts: all
+  gather_facts: false
+  tasks:
+    - name: enable PowerTools repo
+      become: true
+      ini_file:
+        path: /etc/yum.repos.d/CentOS-PowerTools.repo
+        section: PowerTools
+        option: enabled
+        value: "1"
+        state: present

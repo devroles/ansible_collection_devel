@@ -1,0 +1,5 @@
+ansible_packages:
+  - libffi-devel
+  - openssl-devel
+  - libyaml-devel
+  - gmp-devel
