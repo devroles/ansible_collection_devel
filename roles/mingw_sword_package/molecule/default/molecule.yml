@@ -1,8 +1,0 @@
-driver:
-  name: docker
-platforms:
-  - name: instance
-    image: fedora:latest
-provisioner:
-  playbooks:
-    converge: playbook.yml
