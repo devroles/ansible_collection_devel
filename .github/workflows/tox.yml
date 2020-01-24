@@ -1,8 +1,11 @@
 name: Test with Ansible
 
 on:
-  - push
-  - pull_request
+  push:
+    paths-ignore:
+      - README.md
+      - LICENSE
+  pull_request:
 
 env:
   TOX_ANSIBLE_DRIVER: docker
