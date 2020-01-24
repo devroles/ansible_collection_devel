@@ -1,8 +1,9 @@
-[![Build Status](https://travis-ci.com/devroles/ansible_collection_devel.svg?branch=master)](https://travis-ci.com/devroles/ansible_collection_devel)
+[![Actions Status](https://github.com/devroles/ansible_collection_devel/workflows/Test%20with%20Ansible/badge.svg)](https://github.com/devroles/ansible_collection_devel/actions)
 
 # Ansible Collection - devroles.devel
 
-A collection of Ansible system roles for managing Linux systems.
+A collection of Ansible roles to configure and setup a machine for different
+development environments
 
 While the roles are primarily developed with Fedora/CentOS/RHEL in
 mind, there is nothing stopping them from being usable in other
