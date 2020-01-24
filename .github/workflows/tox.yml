@@ -1,6 +1,11 @@
 name: Test with Ansible
 
-on: [push]
+on:
+  - push
+  - pull_request
+
+env:
+  TOX_ANSIBLE_DRIVER: docker
 
 jobs:
   build:
@@ -10,6 +15,10 @@ jobs:
       max-parallel: 4
       matrix:
         python-version: [2.7, 3.7]
+        role:
+          - ansible
+          - cinch
+          - sword
 
     steps:
     - uses: actions/checkout@v2
@@ -19,9 +28,14 @@ jobs:
       uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Setup pip cache
+      with: actions/cache@v1
+      with:
+        path: ~/.cache/pip
+        key: pip-modules
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install tox tox-ansible
     - name: Test with tox
-      run: tox --ansible-role mingw_sword_package
+      run: tox --ansible-role ${{ matrix.role }}
