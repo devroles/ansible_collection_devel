@@ -1,4 +1,4 @@
-name: Python package
+name: Test with Ansible
 
 on: [push]
 
@@ -12,7 +12,9 @@ jobs:
         python-version: [2.7, 3.7]
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+    - name: Checkout submodules
+      uses: textbook/git-checkout-submodule-action@2.0.0
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
