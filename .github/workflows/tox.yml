@@ -6,6 +6,8 @@ on:
       - README.md
       - LICENSE
   pull_request:
+  schedule:
+    - "12 0 * * *"
 
 env:
   TOX_ANSIBLE_DRIVER: docker
