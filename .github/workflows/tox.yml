@@ -25,7 +25,7 @@ jobs:
           - ansible
           - cinch
           - sword
-          - java-devel
+          - java_devel
           - packaging
 
     steps:
