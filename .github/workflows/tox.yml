@@ -11,15 +11,16 @@ on:
 
 env:
   TOX_ANSIBLE_DRIVER: docker
+  ANSIBLE_COLLECTIONS_PATHS: ~/.ansible/:~/work/
+  COLLECTION: devel
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: [2.7, 3.7]
+        python-version: [3.7]
         role:
           - ansible
           - cinch
@@ -34,18 +35,26 @@ jobs:
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --remote --recursive
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: Setup pip cache
       uses: actions/cache@v1
       with:
         path: ~/.cache/pip
         key: pip-modules
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v1
+      with:
+        python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install tox tox-ansible
     - name: Test with tox
-      run: tox --ansible-role ${{ matrix.role }}
+      run: |
+        cd ..
+        dest="${HOME}/work/ansible_collections/devroles"
+        mkdir -p "${dest}"
+        mv "$(basename "${GITHUB_REPOSITORY}")" "${dest}/${COLECTION}"
+        # post actions fail if this doesn't exist
+        mkdir -p "$(basename "${GITHUB_REPOSITORY}")"
+        cd "${dest}/${COLLECTION}"
+        tox --ansible-role ${{ matrix.role }}
