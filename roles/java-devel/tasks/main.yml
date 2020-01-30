@@ -1,0 +1,18 @@
+- name: install necessary packages
+  become: true
+  package:
+    name: "{{ java_devel_packages }}"
+
+- name: ensure m2 directory exists
+  file:
+    dest: "{{ ansible_user_dir }}/.m2/"
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    mode: 0755
+
+- name: configure maven repository
+  template:
+    src: settings.xml
+    dest: "{{ ansible_user_dir }}/.m2/settings.xml"
+    owner: "{{ ansible_user_id }}"
+    mode: 0644

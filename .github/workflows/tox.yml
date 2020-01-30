@@ -25,6 +25,7 @@ jobs:
           - ansible
           - cinch
           - sword
+          - java-devel
 
     steps:
     - uses: actions/checkout@v2

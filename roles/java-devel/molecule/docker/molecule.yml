@@ -1,0 +1,5 @@
+driver:
+  name: docker
+platforms:
+  - name: java-devel
+    image: fedora:latest
