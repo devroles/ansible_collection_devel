@@ -3,7 +3,7 @@
   vars:
     cmake_options: >-
       -DSWORD_PYTHON_3:BOOL=TRUE
-      -DWORD_PERL:BOOL=TRUE
+      -DSWORD_PERL:BOOL=TRUE
       -DSWORD_BUILD_EXAMPLES="Yes"
       -DSWORD_BUILD_TESTS="Yes"
       -DLIBSWORD_LIBRARY_TYPE="Shared"
