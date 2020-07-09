@@ -46,7 +46,7 @@ jobs:
             json="${json}\"${x}\","
           done
           json="${json%,}]"
-        echo "::set-output name=scenarios::${json}"
+          echo "::set-output name=scenarios::${json}"
 
   build:
     needs: collect
