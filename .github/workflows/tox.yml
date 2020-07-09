@@ -79,7 +79,7 @@ jobs:
         set -ex
         # Something magical happens here with the "mv" command
         mv ansible_collections ~/work/
-        cd "~/work/${{ env.checkout_path }}"
+        cd ~/work/${{ env.checkout_path }}
         tox -e "${{ matrix.scenario }}"
 
   release:
