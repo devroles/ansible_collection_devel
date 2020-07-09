@@ -1,0 +1,4 @@
+- name: Update everything
+  hosts: all
+  roles:
+    - oasis_roles.system.package_updater
