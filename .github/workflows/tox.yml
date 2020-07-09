@@ -12,31 +12,54 @@ on:
 env:
   TOX_ANSIBLE_DRIVER: docker
   ANSIBLE_COLLECTIONS_PATHS: ~/.ansible/:~/work/
-  COLLECTION: devel
+  checkout_path: ansible_collections/devroles/devel
 
 jobs:
-  build:
+  collect:
+    runs-on: ubuntu-latest
+    outputs:
+      scenarios: ${{ steps.collection.outputs.scenarios }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Setup pip cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip-modules
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3
+      - name: Install dependencies
+        run: |
+          set -ex
+          python -m pip install --upgrade pip
+          pip install tox tox-ansible
+      - name: Collect dependencies
+        id: collection
+        run: |
+          set -ex
+          json="["
+          for x in $(tox -l --ansible-driver docker); do
+            json="${json}\"${x}\","
+          done
+          json="${json%,}]"
+        echo "::set-output name=scenarios::${json}"
 
+  build:
+    needs: collect
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: [3.7]
-        role:
-          - ansible
-          - cinch
-          - sword
-          - java_devel
-          - packaging
-
+        scenario: ${{ fromJson(needs.collect.outputs.scenarios) }}
     steps:
     - uses: actions/checkout@v2
-    - name: Checkout submodules
-      shell: bash
-      run: |
-        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-        git submodule sync --recursive
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --remote --recursive
+      with:
+        submodules: 'recursive'
+        path: ${{ env.checkout_path }}
     - name: Setup pip cache
       uses: actions/cache@v1
       with:
@@ -45,18 +68,45 @@ jobs:
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3
     - name: Install dependencies
       run: |
+        set -ex
         python -m pip install --upgrade pip
         pip install tox tox-ansible
-    - name: Test with tox
+    - name: Run tox against ${{ matrix.scenario }}
       run: |
-        cd ..
-        dest="${HOME}/work/ansible_collections/devroles"
-        mkdir -p "${dest}"
-        mv "$(basename "${GITHUB_REPOSITORY}")" "${dest}/${COLLECTION}"
-        # post actions fail if this doesn't exist
-        mkdir -p "$(basename "${GITHUB_REPOSITORY}")"
-        cd "${dest}/${COLLECTION}"
-        tox --ansible-role ${{ matrix.role }}
+        set -ex
+        # Something magical happens here with the "mv" command
+        mv ansible_collections ~/work/
+        cd "~/work/${{ env.checkout_path }}"
+        tox -e "${{ matrix.scenario }}"
+
+  release:
+    needs: build
+    if: startsWith(github.ref, "refs/tags/")  # Only release tagged versions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3
+      - name: Install dependencies
+        run: |
+          set -ex
+          python -m pip install --upgrade pip
+          pip install ansible
+      - name: Create release artifacts
+        run: |
+          ansible-galaxy collection build
+          ansible-galaxy collection public *.tar.gz --api-key ${{ secrets.GALAXY_API_KEY }}
+      - name: Release artifacts to Github
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: ./devroles-devel*.tar.gz
+          allowUpdates: true
+          name: Release ${{ github.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
