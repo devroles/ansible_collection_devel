@@ -1,5 +1,5 @@
 driver:
   name: docker
 platforms:
-  - name: ansible
+  - name: ansible_fedora
     image: fedora:latest

@@ -1,5 +1,5 @@
 driver:
   name: docker
 platforms:
-  - name: sword
+  - name: sword_centos
     image: centos:7
