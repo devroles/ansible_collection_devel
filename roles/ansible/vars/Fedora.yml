@@ -4,3 +4,5 @@ ansible_packages:
   - libyaml-devel
   - gmp-devel
   - python3-setuptools
+  - python3-devel
+  - gcc
