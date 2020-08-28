@@ -6,3 +6,4 @@ ansible_packages:
   - python3-setuptools
   - python3-devel
   - gcc
+  - python3-virtualenv

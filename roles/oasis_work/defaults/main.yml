@@ -1,0 +1,1 @@
+oasis_work_prefix: "{{ ansible_user_dir }}"

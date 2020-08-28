@@ -1,0 +1,62 @@
+- name: Install basic tools
+  package:
+    name:
+      - git
+      - git-subtree
+    state: present
+  become: true
+
+- name: Install Ansible to virtualenv
+  pip:
+    virtualenv: "{{ ansible_user_dir }}/ansible-venv"
+    name:
+      - ansible
+      - tox
+      - tox-ansible
+    state: present
+  register: ansible_venv_install
+  retries: 3
+  until: ansible_venv_install is success
+
+- name: Set ansible.cfg value for collections_paths
+  ini_file:
+    path: "{{ ansible_user_dir }}/.ansible.cfg"
+    mode: 0644
+    create: true
+    section: defaults
+    option: collections_paths
+    # yamllint disable-line rule:line-length
+    value: "{{ ansible_user_dir }}/.ansible/collections:{{ oasis_work_prefix }}/"
+
+- name: Set ansible.cfg value for role_skeleton
+  ini_file:
+    path: "{{ ansible_user_dir }}/.ansible.cfg"
+    mode: 0644
+    section: galaxy
+    option: "{{ item.option }}"
+    value: "{{ item.value }}"
+  loop:
+    - option: role_skeleton
+      value: "{{ oasis_work_prefix }}/meta_skeleton"
+    - option: role_skeleton_ignore
+      # Ignores .git directory, .git_keep files, and tmp files from vim
+      value: ^.git$,^.*/.git_keep$,\..*.swp
+
+- name: Create repository locations
+  file:
+    state: directory
+    mode: 0755
+    path: "{{ oasis_work_prefix }}/ansible_collections/oasis_roles/"
+
+- name: Clone template repositories
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ oasis_work_prefix }}/{{ item.dir }}"
+    clone: true
+    update: false
+    version: master
+  loop:
+    - repo: https://github.com/oasis-roles/meta_skeleton.git
+      dir: meta_skeleton
+    - repo: https://github.com/oasis-roles/meta_ansible_collection_template.git
+      dir: meta_ansible_collection_template
