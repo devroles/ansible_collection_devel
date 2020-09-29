@@ -1,4 +1,4 @@
-name: Test with Ansible
+name: tox
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         run: |
           set -ex
           python -m pip install --upgrade pip
-          pip install tox tox-ansible
+          pip install -r test-requirements.txt
       - name: Collect dependencies
         id: collection
         run: |
@@ -73,7 +73,8 @@ jobs:
       run: |
         set -ex
         python -m pip install --upgrade pip
-        pip install tox tox-ansible
+        cd "${{ env.checkout_path }}"
+        pip install -r test-requirements.txt
     - name: Run tox against ${{ matrix.scenario }}
       run: |
         set -ex
