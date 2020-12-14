@@ -5,6 +5,7 @@
       - git-subtree
     state: present
   become: true
+  when: ansible_facts.pkg_mgr not in ['atomic_container']
 
 - name: Install Ansible to virtualenv
   pip:

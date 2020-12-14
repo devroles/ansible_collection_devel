@@ -11,7 +11,8 @@
   package:
     name: epel-release
     state: present
-  when: ansible_distribution == 'CentOS' or ansible_distribution == 'RHEL'
+  when: >-
+    ansible_facts.distribution in ['CentOS', 'RHEL']
   changed_when: false  # reports "changed" on CentOS 8
 
 - name: install Sword devel packages

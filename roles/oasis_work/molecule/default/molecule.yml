@@ -1,5 +1,5 @@
 driver:
-  name: docker
+  name: podman
 platforms:
   - name: oasis_work
     image: fedora:latest

@@ -4,14 +4,15 @@
     name: "{{ cinch_packages }}"
     state: present
 
-- name: start and enable docker
+- name: start and enable podman
   become: true
   service:
-    name: docker
+    name: podman
     state: started
     enabled: true
   when:
     - ansible_connection != 'docker'
+    - ansible_connection != 'podman'
 
 - name: check out code
   git:

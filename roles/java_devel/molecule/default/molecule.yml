@@ -1,5 +1,5 @@
 driver:
-  name: docker
+  name: podman
 platforms:
   - name: java_devel
     image: fedora:latest
