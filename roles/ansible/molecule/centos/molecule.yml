@@ -1,5 +1,0 @@
-driver:
-  name: podman
-platforms:
-  - name: ansible_centos
-    image: centos:7
