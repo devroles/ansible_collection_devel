@@ -56,31 +56,31 @@ jobs:
       matrix:
         scenario: ${{ fromJson(needs.collect.outputs.scenarios) }}
     steps:
-    - uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
-        path: ${{ env.checkout_path }}
-    - name: Setup pip cache
-      uses: actions/cache@v1
-      with:
-        path: ~/.cache/pip
-        key: pip-modules
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3
-    - name: Install dependencies
-      run: |
-        set -ex
-        python -m pip install --upgrade pip
-        pip install tox
-    - name: Run tox against ${{ matrix.scenario }}
-      run: |
-        set -ex
-        # Something magical happens here with the "mv" command
-        mv ansible_collections ~/work/
-        cd ~/work/${{ env.checkout_path }}
-        tox -e "${{ matrix.scenario }}"
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+          path: ${{ env.checkout_path }}
+      - name: Setup pip cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.cache/pip
+          key: pip-modules
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3
+      - name: Install dependencies
+        run: |
+          set -ex
+          python -m pip install --upgrade pip
+          pip install tox
+      - name: Run tox against ${{ matrix.scenario }}
+        run: |
+          set -ex
+          # Something magical happens here with the "mv" command
+          mv ansible_collections ~/work/
+          cd ~/work/${{ env.checkout_path }}
+          tox -e "${{ matrix.scenario }}"
 
   release:
     needs: build
