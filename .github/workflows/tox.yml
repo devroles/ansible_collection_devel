@@ -1,6 +1,6 @@
 name: Test with Ansible
 
-on:
+"on":
   push:
     paths-ignore:
       - README.md
@@ -23,29 +23,17 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - name: Setup pip cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: pip-modules
       - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3
+        uses: actions/setup-python@v2
       - name: Install dependencies
         run: |
           set -ex
-          python -m pip install --upgrade pip
-          pip install tox
+          python -m pip install --upgrade tox
       - name: Collect dependencies
         id: collection
         run: |
           set -ex
-          json="["
-          for x in $(tox -ql --ansible-driver podman); do
-            json="${json}\"${x}\","
-          done
-          json="${json%,}]"
+          json="$(tox -ql --ansible-driver podman | python -c 'import json; import sys; print(json.dumps(sys.stdin.read().strip().split("\n")))')
           echo "::set-output name=scenarios::${json}"
 
   build:
@@ -60,20 +48,12 @@ jobs:
         with:
           submodules: 'recursive'
           path: ${{ env.checkout_path }}
-      - name: Setup pip cache
-        uses: actions/cache@v1
-        with:
-          path: ~/.cache/pip
-          key: pip-modules
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3
+        uses: actions/setup-python@v2
       - name: Install dependencies
         run: |
           set -ex
-          python -m pip install --upgrade pip
-          pip install tox
+          python -m pip install --upgrade tox
       - name: Run tox against ${{ matrix.scenario }}
         run: |
           set -ex
@@ -85,24 +65,14 @@ jobs:
   release:
     needs: build
     if: startsWith(github.ref, 'refs/tags/')  # Only release tagged versions
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: 'recursive'
-      - name: Setup Python
-        uses: actions/setup-python@v1
+      - uses: artis3n/ansible_galaxy_collection@v2.2.1
         with:
-          python-version: 3
-      - name: Install dependencies
-        run: |
-          set -ex
-          python -m pip install --upgrade pip
-          pip install ansible
-      - name: Create release artifacts
-        run: |
-          ansible-galaxy collection build
-          ansible-galaxy collection publish *.tar.gz --api-key ${{ secrets.GALAXY_API_KEY }}
+          api_key: ${{ secrets.GALAXY_API_KEY }}
       - name: Release artifacts to Github
         uses: ncipollo/release-action@v1
         with:

@@ -13,6 +13,7 @@
     section: PowerTools
     option: enabled
     value: "1"
+    mode: 0644
   become: true
   when:
     - ansible_distribution == 'CentOS'
