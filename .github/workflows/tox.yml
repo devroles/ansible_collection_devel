@@ -33,7 +33,7 @@ jobs:
         id: collection
         run: |
           set -ex
-          json="$(tox -ql --ansible-driver podman | python -c 'import json; import sys; print(json.dumps(sys.stdin.read().strip().split("\n")))')
+          json="$(tox -ql --ansible-driver podman | python -c 'import json; import sys; print(json.dumps(sys.stdin.read().strip().split("\n")))')"
           echo "::set-output name=scenarios::${json}"
 
   build:
