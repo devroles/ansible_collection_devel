@@ -1,5 +1,0 @@
-driver:
-  name: podman
-platforms:
-  - name: cinch
-    image: fedora:latest
