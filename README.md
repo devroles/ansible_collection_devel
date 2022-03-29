@@ -1,3 +1,5 @@
+# THIS COLLECTION HAS BEEN DEPRECATED, SEE [MY MONO REPO](HTTPS://GITHUB.COM/DEVROLES/ANSIBLE_COLLECTION_SYSTEM)
+
 [![Actions Status](https://github.com/devroles/ansible_collection_devel/workflows/Test%20with%20Ansible/badge.svg)](https://github.com/devroles/ansible_collection_devel/actions)
 
 # Ansible Collection - devroles.devel
